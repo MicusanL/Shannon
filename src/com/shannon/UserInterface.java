@@ -11,17 +11,17 @@ public class UserInterface {
     private JButton button1;
     private JPanel panel1;
 
-    public UserInterface(){
+    public UserInterface() {
         initialize();
     }
 
-    public void initialize(){
+    public void initialize() {
 
-        frame.setBounds(100,199,450,300);
+        frame.setBounds(100, 199, 450, 300);
         frame.pack();
         frame.getContentPane().setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500,300);
+        frame.setSize(500, 300);
 
         frame.setVisible(true);
 
@@ -32,22 +32,40 @@ public class UserInterface {
 //        textArea.setBounds(82,34,275,107);
 //        frame.getContentPane().add(textArea);
 
-        JButton btnNewButton = new JButton("Get file");
-        btnNewButton.addActionListener(new ActionListener() {
+// Code File bnt -------------------------------------------------------------------------
+        JButton btnCodeFile = new JButton("Code File");
+        btnCodeFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Shannon shannon = new Shannon();
-                try{
-                    shannon.MainClass();
-                }catch (Exception ex){
+                Code shannonCode = new Code();
+                try {
+                    shannonCode.CodeFileUsingShannon();
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-//                textArea.setText(shannon.stringBuilder.toString());
             }
         });
 
-        btnNewButton.setBounds(160,182,121,43);
-        frame.getContentPane().add(btnNewButton);
+        btnCodeFile.setBounds(100, 100, 121, 43);
+        frame.getContentPane().add(btnCodeFile);
+
+// Decode File bnt -------------------------------------------------------------------------
+
+        JButton btnDecodeFile = new JButton("Decode File");
+        btnDecodeFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Decode shannonDecode = new Decode();
+                try {
+                    shannonDecode.DecodeFileUsingShannon();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        btnDecodeFile.setBounds(250, 100, 121, 43);
+        frame.getContentPane().add(btnDecodeFile);
     }
 
 
@@ -56,10 +74,10 @@ public class UserInterface {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                try{
+                try {
                     UserInterface window = new UserInterface();
                     window.frame.setVisible(true);
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
