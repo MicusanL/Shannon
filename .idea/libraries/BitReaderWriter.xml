@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="BitReaderWriter">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../Java/Criptare/BitReaderWriter/dist/BitReaderWriter.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
