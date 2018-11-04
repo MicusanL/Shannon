@@ -1,22 +1,11 @@
 package com.shannon;
 
-import bitreaderwriter.BitReader;
-import bitreaderwriter.BitWriter;
-import bitreaderwriter.Constants;
-
 import javax.swing.*;
 
 
 public class Code {
     JFileChooser fileChooser = new JFileChooser();
-    //  StringBuilder stringBuilder = new StringBuilder();
-    // JPanel jPanel = new JPanel();
 
-    // int[] statisticsPerCharacter;
-    // private String inputFile;
-
-
-    //public static CharacterDetails[] characterArray = new CharacterDetails[256];
 
     public void CodeFileUsingShannon() {
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -34,7 +23,7 @@ public class Code {
             shannonFunctions.modelConstruct(0, shannonFunctions.characterNumber);
             shannonFunctions.printCharacterArray();
 
-            shannonFunctions.writeFile(outputFile);
+            shannonFunctions.writeCodedFile(outputFile);
             System.out.println("file finished");
         }
     }

@@ -7,15 +7,13 @@ import bitreaderwriter.Constants;
 public class Commons {
 
     private String inputFile;
-    public static CharacterDetails[] characterArray;
+    public CharacterDetails[] characterArray;
     int[] statisticsPerCharacter;
     int characterNumber;
 
-/*    public Commons(CharacterDetails[] characterArrayReceived) {
-        characterArray = characterArrayReceived;
-    }*/
 
     public Commons(String inputFile) {
+
         this.inputFile = inputFile;
         statisticsPerCharacter = new int[256];
         characterArray = new CharacterDetails[256];
@@ -35,7 +33,6 @@ public class Commons {
 
     void modelConstruct(int startIndex, int stopIndex) {
 
-
         int bestCut = 0;
         int minDiference = Integer.MAX_VALUE;
 
@@ -53,17 +50,15 @@ public class Commons {
             int leftSum = 0;
             int rightSum = 0;
 
-
             for (int i = startIndex; i < cutPosition; i++) {
+
                 leftSum += characterArray[i].frequency;
             }
 
             for (int i = cutPosition; i < stopIndex; i++) {
+
                 rightSum += characterArray[i].frequency;
             }
-
-//            System.out.println(cutPosition + " " + Math.abs(leftSum - rightSum));
-
 
             if (Math.abs(leftSum - rightSum) < minDiference) {
                 minDiference = Math.abs(leftSum - rightSum);
@@ -72,10 +67,12 @@ public class Commons {
         }
 
         for (int i = startIndex; i < stopIndex; i++) {
-//            leftSum += characterArray[i].frequency;
+
             characterArray[i].codeBitsNumber++;
             characterArray[i].codeVal <<= 1;
+
             if (i >= bestCut) {
+
                 characterArray[i].codeVal++;
             }
         }
@@ -111,8 +108,9 @@ public class Commons {
     }
 
     private void writeHeader(BitWriter bitWriterInstance, int characterNumber) {
-        System.out.println("Header");
+
         for (int i = 0; i < 256; i++) {
+
             if (statisticsPerCharacter[i] == 0) {
                 bitWriterInstance.WriteNBits(0, 2);
 
@@ -134,15 +132,14 @@ public class Commons {
         orderCharacterArrayByAscii();
         for (int i = 0; i < characterNumber; i++) {
             if (characterArray[i].frequency < 256) {
-                bitWriterInstance.WriteNBits(characterArray[i].frequency, 1);
+                bitWriterInstance.WriteNBits(characterArray[i].frequency, Constants.WORD_BITS_NUMBER);
 
             } else if (characterArray[i].frequency < 65536) {
-                bitWriterInstance.WriteNBits(characterArray[i].frequency, 2);
+                bitWriterInstance.WriteNBits(characterArray[i].frequency, 2 * Constants.WORD_BITS_NUMBER);
 
             } else {
-                bitWriterInstance.WriteNBits(characterArray[i].frequency, 4);
+                bitWriterInstance.WriteNBits(characterArray[i].frequency, 4 * Constants.WORD_BITS_NUMBER);
             }
-
         }
 
     }
@@ -157,12 +154,10 @@ public class Commons {
         return -1;
     }
 
-    public void writeFile(String outputFile) {
+    public void writeCodedFile(String outputFile) {
         BitWriter bitWriterInstance = new BitWriter(outputFile);
 
         writeHeader(bitWriterInstance, characterNumber);
-
-//        orderCharacterArrayByAscii(characterNumber);
 
         BitReader bitReaderInstance = new BitReader(inputFile);
         int bitsRemainToRead = bitReaderInstance.fileLength;
@@ -185,11 +180,12 @@ public class Commons {
         bitWriterInstance.WriteNBits(0, Constants.WORD_BITS_NUMBER - 1);
     }
 
-
     void orderCharacterArrayByFrequency() {
+
         CharacterDetails temp;
         for (int i = 0; i < characterNumber - 1; i++) {
             for (int j = i + 1; j < characterNumber; j++) {
+
                 if (characterArray[i].frequency > characterArray[j].frequency) {
                     temp = characterArray[i];
                     characterArray[i] = characterArray[j];
@@ -223,11 +219,10 @@ public class Commons {
 
     void makeStatistics(String inputFile) {
 
-        // int[] statisticsPerCharacter = new int[256];
         BitReader bitReaderInstance = new BitReader(inputFile);
-
         int bitsRemainToRead = bitReaderInstance.fileLength;
         System.out.println(inputFile);
+
         if (bitsRemainToRead == 0) {
             System.err.print("file is empty");
         }
@@ -235,7 +230,36 @@ public class Commons {
             statisticsPerCharacter[bitReaderInstance.ReadNBits(Constants.WORD_BITS_NUMBER)]++;
         }
 
-        //  return statisticsPerCharacter;
+    }
+
+    public void readCodedFile(String inputFile) {
+
+        BitReader bitReaderInstance = new BitReader(inputFile);
+
+        int characterToRead = readHeader(bitReaderInstance);
+
+
+    }
+
+    private int readHeader(BitReader bitReaderInstance) {
+
+        int[] bitMap = new int[256];
+        int characterToRead = 0;
+        for (int i = 0; i < 256; i++) {
+            bitMap[i] = bitReaderInstance.ReadNBits(2);
+        }
+
+        for (int i = 0; i < 256; i++) {
+            if (bitMap[i] != 0) {
+                statisticsPerCharacter[i] = bitReaderInstance.ReadNBits(bitMap[i] * Constants.WORD_BITS_NUMBER);
+                characterToRead += statisticsPerCharacter[i];
+                System.out.println(bitMap[i] * Constants.WORD_BITS_NUMBER + " " + i + " " + statisticsPerCharacter[i]);
+            } else {
+                statisticsPerCharacter[i] = 0;
+            }
+        }
+
+        return characterToRead;
     }
 
 }

@@ -9,30 +9,38 @@ import bitreaderwriter.Constants;
 public class Decode {
 
     JFileChooser fileChooser = new JFileChooser();
-    private String inputFile;
-    int[] statisticsPerCharacter;
-    int characterNumber = 0;
+    //private String inputFile;
+   // int[] statisticsPerCharacter;
+   // int characterNumber = 0;
 
-    public static CharacterDetails[] characterArray = new CharacterDetails[256];
+   // public static CharacterDetails[] characterArray = new CharacterDetails[256];
 
 
     public void DecodeFileUsingShannon() {
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            //get the file
+
+            String inputFile;
             inputFile = fileChooser.getSelectedFile().toString();
-            BitReader bitReaderInstance = new BitReader(inputFile);
-            int bitsRemainToRead = bitReaderInstance.fileLength * Constants.WORD_BITS_NUMBER;
-            bitsRemainToRead -= 512;
+
+            String outputFile = getOutputFileName(inputFile);
+            Commons shannonFunctions = new Commons(inputFile);
+//            shannonFunctions.makeStatistics(inputFile);
+//            readHeader(inputFile);
+            shannonFunctions.readCodedFile(inputFile);
+            shannonFunctions.constructCharacterArray();
 
         }
     }
 
-
-
-    private void readHeader(BitReader bitReaderInstance) {
-
-        for (int i = 0; i < 256; i++) {
-            statisticsPerCharacter[i] = bitReaderInstance.ReadNBits(2);
-        }
+    private String getOutputFileName(String inputFile) {
+        String[] parts = inputFile.split("\\\\"); // regex: need to escape dot
+        String outputFile = parts[parts.length - 1]; // outputs "en"
+        parts = outputFile.split("\\.");
+        outputFile = "Output" + "-Decrypted." + parts[1];
+        System.out.println(outputFile);
+        return outputFile;
     }
+
+
+
 }
