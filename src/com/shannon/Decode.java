@@ -10,10 +10,10 @@ public class Decode {
 
     JFileChooser fileChooser = new JFileChooser();
     //private String inputFile;
-   // int[] statisticsPerCharacter;
-   // int characterNumber = 0;
+    // int[] statisticsPerCharacter;
+    // int characterNumber = 0;
 
-   // public static CharacterDetails[] characterArray = new CharacterDetails[256];
+    // public static CharacterDetails[] characterArray = new CharacterDetails[256];
 
 
     public void DecodeFileUsingShannon() {
@@ -28,15 +28,17 @@ public class Decode {
 //            readHeader(inputFile);
             BitReader bitReaderInstance = new BitReader(inputFile);
 
-            int characterToRead = shannonFunctions.readHeader(bitReaderInstance);
+            int charactersNumber = shannonFunctions.readHeader(bitReaderInstance);
 
             shannonFunctions.constructCharacterArray();
 
             shannonFunctions.orderCharacterArrayByFrequency();
 
             shannonFunctions.modelConstruct(0, shannonFunctions.characterNumber);
-            shannonFunctions.printCharacterArray();
+//            shannonFunctions.printCharacterArray();
+            shannonFunctions.readCodedFile(bitReaderInstance, outputFile, charactersNumber);
         }
+        System.out.println("Decode finished");
     }
 
     private String getOutputFileName(String inputFile) {
@@ -47,7 +49,6 @@ public class Decode {
         System.out.println(outputFile);
         return outputFile;
     }
-
 
 
 }

@@ -232,28 +232,33 @@ public class Commons {
 
     }
 
-/*    public void readCodedFile(BitReader bitReaderInstance, int charactersNumber) {
+    public void readCodedFile(BitReader bitReaderInstance, String outputFile, int charactersNumber) {
 
-
-
-
-        while (charactersNumber!=0){
-            int codeReaded = 0;
-            while()
-
-                charactersNumber--;
+        BitWriter bitWriterInstance = new BitWriter(outputFile);
+        while (charactersNumber != 0) {
+            int codeReaded = 0, codeBitsNr = 0, index;
+            do {
+                codeReaded <<= 1;
+                codeReaded += bitReaderInstance.ReadNBits(1);
+                codeBitsNr++;
+                index = compareCode(codeReaded, codeBitsNr);
+            } while (index == -1);
+//            System.out.println(characterArray[index].asciiCode);
+            bitWriterInstance.WriteNBits(characterArray[index].asciiCode,Constants.WORD_BITS_NUMBER);
+            charactersNumber--;
         }
 
 
-    }*/
-
-/*
-    private boolean compareCode(int code){
-        for(int i=0;i<characterNumber;i++){
-
-        }
     }
-*/
+
+    private int compareCode(int code, int nrBits) {
+        for (int i = 0; i < characterNumber; i++) {
+            if (characterArray[i].codeVal == code && characterArray[i].codeBitsNumber == nrBits) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public int readHeader(BitReader bitReaderInstance) {
 
@@ -272,7 +277,7 @@ public class Commons {
 
             }
             charactersNumber += statisticsPerCharacter[i];
-          //  System.out.println(i + " " + bitMap[i] + " " + statisticsPerCharacter[i]);
+            //  System.out.println(i + " " + bitMap[i] + " " + statisticsPerCharacter[i]);
         }
 
 //System.out.println(charactersNumber);

@@ -24,7 +24,7 @@ public class Code {
             shannonFunctions.printCharacterArray();
 
             shannonFunctions.writeCodedFile(outputFile);
-            System.out.println("file finished");
+            System.out.println("Code finished");
         }
     }
 
