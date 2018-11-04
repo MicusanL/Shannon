@@ -116,16 +116,16 @@ public class Commons {
 
             } else if (statisticsPerCharacter[i] < 256) {
                 bitWriterInstance.WriteNBits(1, 2);
-                System.out.println(1);
+//                System.out.println(1);
 
             } else if (statisticsPerCharacter[i] < 65536) {
                 bitWriterInstance.WriteNBits(2, 2);
-                System.out.println(2);
+//                System.out.println(2);
 
 
             } else {
                 bitWriterInstance.WriteNBits(3, 2);
-                System.out.println(3);
+//                System.out.println(3);
             }
         }
 
@@ -221,7 +221,7 @@ public class Commons {
 
         BitReader bitReaderInstance = new BitReader(inputFile);
         int bitsRemainToRead = bitReaderInstance.fileLength;
-        System.out.println(inputFile);
+//        System.out.println(inputFile);
 
         if (bitsRemainToRead == 0) {
             System.err.print("file is empty");

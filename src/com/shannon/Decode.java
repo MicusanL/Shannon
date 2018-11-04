@@ -39,14 +39,16 @@ public class Decode {
             shannonFunctions.readCodedFile(bitReaderInstance, outputFile, charactersNumber);
         }
         System.out.println("Decode finished");
+        System.exit(0);
     }
 
     private String getOutputFileName(String inputFile) {
         String[] parts = inputFile.split("\\\\"); // regex: need to escape dot
         String outputFile = parts[parts.length - 1]; // outputs "en"
         parts = outputFile.split("\\.");
-        outputFile = "Output" + "-Decrypted." + parts[1];
-        System.out.println(outputFile);
+        String[] parts2 = parts[0].split("-");
+        outputFile = "C://Users//lidia//Desktop//Shannon//" + parts2[0] + "-Shanon-decrypted." + parts[1];
+//        System.out.println(outputFile);
         return outputFile;
     }
 

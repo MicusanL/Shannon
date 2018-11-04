@@ -21,10 +21,11 @@ public class Code {
             shannonFunctions.orderCharacterArrayByFrequency();
 
             shannonFunctions.modelConstruct(0, shannonFunctions.characterNumber);
-            shannonFunctions.printCharacterArray();
+//            shannonFunctions.printCharacterArray();
 
             shannonFunctions.writeCodedFile(outputFile);
             System.out.println("Code finished");
+            System.exit(0);
         }
     }
 
@@ -32,7 +33,8 @@ public class Code {
         String[] parts = inputFile.split("\\\\"); // regex: need to escape dot
         String outputFile = parts[parts.length - 1]; // outputs "en"
         parts = outputFile.split("\\.");
-        outputFile = parts[0] + "-encrypted." + parts[1];
+        outputFile = "C://Users//lidia//Desktop//Shannon//" + parts[0] + "-Shanon-encrypted." + parts[1];
+
         return outputFile;
     }
 
