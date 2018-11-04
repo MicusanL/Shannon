@@ -1,13 +1,39 @@
 package com.shannon;
 
+import bitreaderwriter.BitReader;
+import bitreaderwriter.BitWriter;
+import bitreaderwriter.Constants;
+
 public class Commons {
 
+    private String inputFile;
     public static CharacterDetails[] characterArray;
-    public Commons(CharacterDetails[] characterArrayReceived) {
+    int[] statisticsPerCharacter;
+    int characterNumber;
+
+/*    public Commons(CharacterDetails[] characterArrayReceived) {
         characterArray = characterArrayReceived;
+    }*/
+
+    public Commons(String inputFile) {
+        this.inputFile = inputFile;
+        statisticsPerCharacter = new int[256];
+        characterArray = new CharacterDetails[256];
     }
 
-    static void modelConstruct(int startIndex, int stopIndex) {
+    public void constructCharacterArray() {
+
+        for (int i = 0; i < 256; i++) {
+            if (statisticsPerCharacter[i] != 0) {
+
+                CharacterDetails temp = new CharacterDetails(i, statisticsPerCharacter[i]);
+                characterArray[characterNumber] = temp;
+                characterNumber++;
+            }
+        }
+    }
+
+    void modelConstruct(int startIndex, int stopIndex) {
 
 
         int bestCut = 0;
@@ -16,7 +42,7 @@ public class Commons {
         if (startIndex >= stopIndex) {
             return;
         } else if (stopIndex - startIndex == 1) {
-            if(characterArray[startIndex].codeBitsNumber == 0){
+            if (characterArray[startIndex].codeBitsNumber == 0) {
                 characterArray[startIndex].codeBitsNumber++;
             }
             return;
@@ -83,4 +109,133 @@ public class Commons {
 
 
     }
+
+    private void writeHeader(BitWriter bitWriterInstance, int characterNumber) {
+        System.out.println("Header");
+        for (int i = 0; i < 256; i++) {
+            if (statisticsPerCharacter[i] == 0) {
+                bitWriterInstance.WriteNBits(0, 2);
+
+            } else if (statisticsPerCharacter[i] < 256) {
+                bitWriterInstance.WriteNBits(1, 2);
+                System.out.println(1);
+
+            } else if (statisticsPerCharacter[i] < 65536) {
+                bitWriterInstance.WriteNBits(2, 2);
+                System.out.println(2);
+
+
+            } else {
+                bitWriterInstance.WriteNBits(3, 2);
+                System.out.println(3);
+            }
+        }
+
+        orderCharacterArrayByAscii();
+        for (int i = 0; i < characterNumber; i++) {
+            if (characterArray[i].frequency < 256) {
+                bitWriterInstance.WriteNBits(characterArray[i].frequency, 1);
+
+            } else if (characterArray[i].frequency < 65536) {
+                bitWriterInstance.WriteNBits(characterArray[i].frequency, 2);
+
+            } else {
+                bitWriterInstance.WriteNBits(characterArray[i].frequency, 4);
+            }
+
+        }
+
+    }
+
+    private int getCharacterPosition(int asciiCode) {
+
+        for (int i = 0; i < 256; i++) {
+            if (characterArray[i].asciiCode == asciiCode) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void writeFile(String outputFile) {
+        BitWriter bitWriterInstance = new BitWriter(outputFile);
+
+        writeHeader(bitWriterInstance, characterNumber);
+
+//        orderCharacterArrayByAscii(characterNumber);
+
+        BitReader bitReaderInstance = new BitReader(inputFile);
+        int bitsRemainToRead = bitReaderInstance.fileLength;
+
+        for (int i = 0; i < bitsRemainToRead; i++) {
+
+            int byteReaded = bitReaderInstance.ReadNBits(Constants.WORD_BITS_NUMBER);
+            int positionInArray = getCharacterPosition(byteReaded);
+
+            if (positionInArray == -1) {
+
+                System.err.println("Character not find in array!");
+            } else {
+
+                bitWriterInstance.WriteNBits(characterArray[positionInArray].codeVal,
+                        characterArray[positionInArray].codeBitsNumber);
+            }
+        }
+
+        bitWriterInstance.WriteNBits(0, Constants.WORD_BITS_NUMBER - 1);
+    }
+
+
+    void orderCharacterArrayByFrequency() {
+        CharacterDetails temp;
+        for (int i = 0; i < characterNumber - 1; i++) {
+            for (int j = i + 1; j < characterNumber; j++) {
+                if (characterArray[i].frequency > characterArray[j].frequency) {
+                    temp = characterArray[i];
+                    characterArray[i] = characterArray[j];
+                    characterArray[j] = temp;
+                }
+            }
+        }
+    }
+
+    void orderCharacterArrayByAscii() {
+        CharacterDetails temp;
+        for (int i = 0; i < characterNumber - 1; i++) {
+            for (int j = i + 1; j < characterNumber; j++) {
+                if (characterArray[i].asciiCode > characterArray[j].asciiCode) {
+                    temp = characterArray[i];
+                    characterArray[i] = characterArray[j];
+                    characterArray[j] = temp;
+                }
+            }
+        }
+    }
+
+    public void printCharacterArray() {
+        for (int i = 0; i < characterNumber; i++) {
+
+            System.out.println(characterArray[i].asciiCode + " " + characterArray[i].frequency +
+                    " " + Integer.toBinaryString(characterArray[i].codeVal) + " " + characterArray[i].codeBitsNumber);
+
+        }
+    }
+
+    void makeStatistics(String inputFile) {
+
+        // int[] statisticsPerCharacter = new int[256];
+        BitReader bitReaderInstance = new BitReader(inputFile);
+
+        int bitsRemainToRead = bitReaderInstance.fileLength;
+        System.out.println(inputFile);
+        if (bitsRemainToRead == 0) {
+            System.err.print("file is empty");
+        }
+        for (int i = 0; i < bitsRemainToRead; i++) {
+            statisticsPerCharacter[bitReaderInstance.ReadNBits(Constants.WORD_BITS_NUMBER)]++;
+        }
+
+        //  return statisticsPerCharacter;
+    }
+
 }

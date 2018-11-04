@@ -11,6 +11,7 @@ public class Decode {
     JFileChooser fileChooser = new JFileChooser();
     private String inputFile;
     int[] statisticsPerCharacter;
+    int characterNumber = 0;
 
     public static CharacterDetails[] characterArray = new CharacterDetails[256];
 
@@ -25,6 +26,8 @@ public class Decode {
 
         }
     }
+
+
 
     private void readHeader(BitReader bitReaderInstance) {
 
