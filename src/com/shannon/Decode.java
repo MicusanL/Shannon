@@ -26,9 +26,16 @@ public class Decode {
             Commons shannonFunctions = new Commons(inputFile);
 //            shannonFunctions.makeStatistics(inputFile);
 //            readHeader(inputFile);
-            shannonFunctions.readCodedFile(inputFile);
+            BitReader bitReaderInstance = new BitReader(inputFile);
+
+            int characterToRead = shannonFunctions.readHeader(bitReaderInstance);
+
             shannonFunctions.constructCharacterArray();
 
+            shannonFunctions.orderCharacterArrayByFrequency();
+
+            shannonFunctions.modelConstruct(0, shannonFunctions.characterNumber);
+            shannonFunctions.printCharacterArray();
         }
     }
 
